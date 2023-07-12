@@ -321,6 +321,28 @@ RSpec.describe Mail::Message do
       message.my_field = 'Hello'
       expect(message.my_field.value).to eq 'Hello'
     end
+
+    it 'works with []= method for properties' do
+       class CustomFieldSetter
+        def something(params)
+          header = params[:header]
+          header['something_else']
+        end
+
+        def something=(params)
+          header = params[:header]
+          value = params[:value]
+
+          header['something_else'] = value
+        end
+      end
+      setter = CustomFieldSetter.new
+      Mail.defaults { custom_fields setter }
+      message = Mail::Message.new
+      message['something'] = 'Goodbye'
+      expect(message.something.value).to eq 'Goodbye'
+      expect(message['something'].value).to eq 'Goodbye'
+    end
   end
 
   describe "envelope line handling" do

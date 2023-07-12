@@ -1327,6 +1327,8 @@ module Mail
         header[name] = value
       elsif name.to_s == 'charset'
         self.charset = value
+      elsif Mail&.custom_fields.respond_to? "#{name}="
+        Mail.custom_fields.send("#{name}=", {header: header, value: value})
       else
         header[name] = value
       end
@@ -1339,6 +1341,9 @@ module Mail
     #  mail['foo'] = '1234'
     #  mail['foo'].to_s #=> '1234'
     def [](name)
+      if Mail&.custom_fields.respond_to? name
+        return Mail.custom_fields.send(name, {header: header})
+      end
       header[Utilities.underscoreize(name)]
     end
 
