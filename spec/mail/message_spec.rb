@@ -284,6 +284,45 @@ RSpec.describe Mail::Message do
     end
   end
 
+  describe 'custom fields' do
+    it 'should allow you to add custom fields' do
+      expect(Mail).to respond_to(:custom_fields)
+    end
+
+    it 'should allow you to set a custom fields setter' do
+      expect(Mail.custom_fields).to be nil
+
+      setter = {}
+
+      Mail.defaults do
+        custom_fields setter
+      end
+
+      expect(Mail.custom_fields).to eq setter
+    end
+
+    it 'uses the setter when provided' do
+      class CustomFieldSetter
+        def my_field(params)
+          header = params[:header]
+          header['my-field']
+        end
+
+        def my_field=(params)
+          header = params[:header]
+          value = params[:value]
+
+          header['my-field'] = value
+        end
+      end
+      setter = CustomFieldSetter.new
+      Mail.defaults { custom_fields setter }
+      message = Mail::Message.new
+      message.my_field = 'Hello'
+      expect(message.my_field.value).to eq 'Hello'
+    end
+  end
+
   describe "envelope line handling" do
     it "should respond to 'envelope from'" do
       expect(Mail::Message.new).to respond_to(:envelope_from)

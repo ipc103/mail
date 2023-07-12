@@ -1392,6 +1392,12 @@ module Mail
         else
           header[field_name] = args.first
         end
+      elsif Mail&.custom_fields.respond_to? name
+        if args.empty?
+          Mail.custom_fields.send(name, {header: header})
+        else
+          Mail.custom_fields.send(name, {header: header, value: args.first})
+        end
       else
         super # otherwise pass it on
       end

@@ -109,6 +109,10 @@ module Mail
     Configuration.instance.retriever_method
   end
 
+  def self.custom_fields
+    Configuration.instance.custom_fields
+  end
+
   # Send an email using the default configuration.  You do need to set a default
   # configuration first before you use self.deliver, if you don't, an appropriate
   # error will be raised telling you to.

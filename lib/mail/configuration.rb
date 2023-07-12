@@ -18,12 +18,19 @@ module Mail
     def initialize
       @delivery_method  = nil
       @retriever_method = nil
+      @custom_fields    = nil
       super
     end
 
     def delivery_method(method = nil, settings = {})
       return @delivery_method if @delivery_method && method.nil?
       @delivery_method = lookup_delivery_method(method).new(settings)
+    end
+
+    def custom_fields(setter = nil)
+      return @custom_fields if @custom_fields || setter.nil?
+
+      @custom_fields = setter
     end
 
     def lookup_delivery_method(method)
